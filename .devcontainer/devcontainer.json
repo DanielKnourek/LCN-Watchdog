@@ -23,7 +23,7 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ZixuanChen.vitest-explorer",
+				"vitest.explorer",
 				"yoavbls.pretty-ts-errors",
 				"bradlc.vscode-tailwindcss",
 			]
