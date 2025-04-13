@@ -9,7 +9,7 @@
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
 		"ghcr.io/devcontainers-contrib/features/vercel-cli:1" : {},
-		"ghcr.io/devcontainers-contrib/features/postgres-asdf:1" : {},
+		"ghcr.io/robbert229/devcontainer-features/postgresql-client:1" : {},
 	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
