@@ -45,6 +45,4 @@ yarn-error.log*
 # idea files
 .idea
 
-# ignore TeX build files and logs
-/doc
-!doc/aux/*.pdf
+doc/aux/*.pdf

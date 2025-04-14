@@ -1,0 +1,406 @@
+\documentclass[FM,SP]{tulthesis}
+% tento dokument používá balíky specifické pro XeLaTeX a lze jej přeložit
+% jen XeLaTeXem, nemáte-li instalována použitá (komerční) písma, změňte
+% nebo vymažte příkazy \set...font na následujících řádcích
+
+% Autor šablony: Pavel Satrapa: http://www.nti.tul.cz/~satrapa/vyuka/latex-tul/
+
+% Autor komentářů, jejich překladů do EN, nastavení BibLaTeXu a aplikace ČSN ISO 690: Jan Koprnický
+% http://www.fm.tul.cz/personal/jan.koprnicky
+
+% ENGLISH EXPLANATION
+% \documentclass[FM,Dis,EN,fonts,bw]{tulthesis} % black and white typing, dissertation thesis at FM, written in English with using of TUL Mono font
+% this document uses packages specific for XeLaTeX and it is possible to
+% compile it by XeLaTeX only, if you haven't installed used (commercial) fonts
+% change them or erase commands \set...font in following rows
+% settings: FM (faculty: FS, FT, FP, EF, FA, FM, FZS a CXI), Dis (type of thesis: BP, DP, Teze, Autoref, Hab, SP, Proj), EN (written in English language), fonts (activation of TUL fonts), bw (black and white)
+
+% Autor of the template tulthesis: Pavel Satrapa: http://www.nti.tul.cz/~satrapa/vyuka/latex-tul/
+
+% Autor of several comments and their translation into English, BibLaTeX settings and CSN ISO 960 citation standard setting: Jan Koprnický
+% http://www.fm.tul.cz/personal/jan.koprnicky
+
+% poslední změna / last modification 19. 9. 2022
+
+\newcommand{\verze}{2.0}
+
+% vlastní příkazy
+\newcommand{\appName}{FLEECA pocket bank}
+\newcommand{\appNameQ}{'\appName'}
+
+% extra balíčky
+\usepackage{numprint}
+\usepackage{hyperref}
+
+\usepackage{polyglossia}
+\setdefaultlanguage{czech} % comment when English is preferred
+%\setdefaultlanguage{english} % comment when Czech is preferred
+
+
+\usepackage{makeidx}
+\makeindex
+
+\usepackage{xunicode}
+\usepackage{xltxtra}
+
+% příkazy specifické pro tento dokument / specific commands for this document
+\newcommand{\argument}[1]{{\ttfamily\color{\tulcolor}#1}}
+\newcommand{\argumentindex}[1]{\argument{#1}\index{#1}}
+\newcommand{\prostredi}[1]{\argumentindex{#1}}
+\newcommand{\prikazneindex}[1]{\argument{\textbackslash #1}}
+\newcommand{\prikaz}[1]{\prikazneindex{#1}\index{#1@\textbackslash #1}}
+\newenvironment{myquote}{\begin{list}{}{\setlength\leftmargin\parindent}\item[]}{\end{list}}
+\newenvironment{listing}{\begin{myquote}\color{\tulcolor}}{\end{myquote}}
+\sloppy
+
+% deklarace pro titulní stránku / title page declaration
+\TULtitle{Dokument specifikace požadavků}{Software requirments specification}
+\TULauthor{Daniel Kňourek}
+
+% pro bakalářské, diplomové a disertační práce / for bachelor, master theses and dissertation
+\TULprogramme{B0613A140005AI}{Aplikovaná informatika}{Applied informatics} %TODO check if correct
+\TULbranch{B0613A140005}{Informační technologie}{Information technology}
+%\TULbranch{1802T008}{Nějaký jiný obor}{Some other branch}
+\TULsupervisor{Ing. Roman Špánek, Ph.D.}
+%\TULconsultant{doc. RNDr. Pavel Satrapa, Ph.D.}
+%\TULconsultant{doc. RNDr. Druhý Konzultant, Ph.D.}
+%\TULconsultant{doc. RNDr. Třetí Konzultant, Ph.D.}
+\TULyear{2023}
+
+% pro habilitační práce / habilitation thesis
+%\TULbranch{}{Technická kybernetika}{Technical cybernetics}
+%\TULyear{2022}
+
+% Použití bibLateXu, pracuje s ISO stylem
+% BibLaTeX settings, works with ISO style
+\usepackage[
+    backend=biber
+    % ,style=iso-authoryear % styl vyžaduje FZS TUL , místo příkazu \cite{} je potřeba využít \parencite{} (sazba kulatých závorek) / style required by FZS TUL use \parencite{} instead of \cite{}
+    ,style=iso-numeric
+    %,style=numeric
+    %,sortlocale=cs_CZ
+    ,autolang=other
+    ,bibencoding=UTF8
+    %,urldate=edtf
+    ,maxcitenames=2 %maximum v textu citovaných jmen
+    ,maxbibnames=3 %maximum v seznamu vyjmenovaných autorů
+    ]{biblatex}
+\addbibresource{refTULTHESIS.bib}% vložení seznamu literárních zdrojů v bib formátu / input of references in bib format
+
+% Úprava iso-numeric.bbx v souladu s požadavky TUL hranaté závorky v číslovaném seznamu / Modification of iso-numeric.bbx in accordance with TUL requirements of square brackets in a numbered list
+\DeclareFieldFormat{labelnumberwidth}{\mkbibbrackets{#1}}
+
+% Formátování podle pokynů FZS, při využití stylu iso-authoryear, čárka mezi jmény a poslední jméno se spojkou a / special requirements of FZS TUL
+\DeclareDelimFormat{multinamedelim}{\addcomma\space}
+
+\DeclareDelimFormat{finalnamedelim}{%
+  \ifnumgreater{\value{liststop}}{2}{\finalandcomma}{}%
+  \addspace\bibstring{and}\space}
+
+\DeclareNameAlias{author}{family-given/given-family}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{csquotes} %užití biblatexu hlásí warnings, důvodem může být použití českých uvozovek v citacích! / solving of problems with Czech quotations
+\urlstyle{same} %sazba url odkazů stejným fontem jako ostatní text, řešení problémů v zalamování hypertextových odkazů v citacích / url in references setting into the same form as text
+
+
+\begin{document}
+
+\ThesisStart{male}
+%\ThesisStart{zadani-a-prohlaseni.pdf}
+
+% \begin{abstractCZ}
+% Tato zpráva popisuje třídu \texttt{tulthesis} pro sazbu absolventských prací
+% Technické univerzity v~Liberci pomocí typografického systému \LaTeX.
+% \end{abstractCZ}
+
+% \begin{keywordsCZ}
+%     % TODO
+%     \LaTeX, třída, TUL
+% \end{keywordsCZ}
+
+% \vspace{2cm}
+
+% \begin{abstractEN}
+%     % TODO
+%     This report describes the \texttt{tulthesis} package for Technical university of
+%     Liberec thesis typesetting using the \LaTeX\ typographic system.
+% \end{abstractEN}
+
+% \begin{keywordsEN}
+%     \LaTeX, class, TUL
+% \end{keywordsEN}
+
+% \clearpage
+
+% \begin{acknowledgement}
+% Rád bych poděkoval všem, kteří přispěli ke vzniku tohoto dílka.
+% \end{acknowledgement}
+
+\tableofcontents
+
+\clearpage
+
+% \begin{abbrList}
+%     % TODO
+%     \textbf{TUL} & Technická univerzita v~Liberci \\
+%     \textbf{FM} & Fakulta mechatroniky, informatiky a mezioborových studií
+%     Technické univerzity v~Liberci
+% \end{abbrList}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DOCUMENT START %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Úvod}
+Tato část dokumentu udává jeho rozsah a přehled jeho obsahu. Také slouží pro definování jeho účelu a záměru.
+
+\section{Účel}
+Účelem tohoto dokumentu je poskytnutí detailně definovaných požadavků aplikace \appNameQ. Bude ilustrovat účel aplikace. Vysvětlí systémová omezení a potřebné zdroje k chodu. Tento dokument je primárně určen k tomu, aby byl zákazníkovi navržen ke schválení a také jako reference pro vývoj první verze systému.
+
+\section{Rozsah}
+Záměrem \appNameQ{} je moderní webová aplikace, která umožní uživateli využívat jak svůj mobilní telefon tak i osobní počítač, jejím účelem je informovat uživatele o stavu jejich účtu a poskytnutí dostatečného počtu nástrojů pro manipulaci účtu a provádění transakcí mezi cizími uživateli.
+% TODO more ?
+
+\chapter{Specifikace požadavků}
+
+Tato část obsahuje definici pro celé funkční chování aplikace a systémové požadavky. Popisuje detailně navržený systém a jeho funkce.
+
+\section{Funkce aplikace}
+% TODO shrnutí funkcí
+
+\subsection{Uživatelský účet}
+
+Klient dále jako 'uživatel', má přístup ke svému uživatelskému učtu a má možnost provádět tyto akce:
+\begin{itemize}
+    \item Vytvořit
+    \item Upravit
+    \item Smazat  (Uzavřít účet)
+\end{itemize}
+Informace, které budou o uživateli uchovávány:
+\begin{itemize}
+    \item Jméno a Příjmení
+          \begin{itemize}
+              \item Údaj uvedený při registraci.
+              \item typ: String
+          \end{itemize}
+    \item Email
+          \begin{itemize}
+              \item Údaj uvedený při registraci.
+              \item typ: String
+          \end{itemize}
+    \item Vlastněné účty
+          \begin{itemize}
+              \item Údaj upravený při vytvoření/smazaní bankovního účtu
+              \item typ: [String]
+          \end{itemize}
+\end{itemize}
+% TODO finish section
+
+\subsubsection{Vytvořit}
+
+Nový uživatel má možnost vytvořit vlastní účet. Při vytváření nového účtu je třeba při registraci zadat Jméno, Příjmení, email a výchozí měnu.
+Při úspěšném vytvoření uživateli bude přidělen nový výchozí účet a jeho číslo nového účtu.
+
+Při vytváření lze využít existující účet 3. strany (google, discord), v takovém případě se při vytváření účtu pokusí doplnit informace které 3. strana poskytuje, ale dovolí uživateli dokončit registraci s vlastními údaji.
+
+% TODO check this paragraph. move it to proper place
+Vzhledem k povaze této aplikace jako online služba a její závislost na online identitě jako je email, je využití registrace a přihlášení pomocí 3. strany bude jako jediný podporovaný způsob vedení účtu mimo přihlášení pod demo a testovací účet.
+
+\subsubsection{Upravit}
+
+Uživatel bude moci kdykoli změnit své jméno.
+
+\subsubsection{Smazat}
+
+Uživatel bude moci smazat, neboli uzavřít, uživatelský účet.
+
+\subsection{Bankovní účet}
+Každý uživatel má přiřazené bankovní účty se kterými může manipulovat. Účet může uživatel kdykoliv vytvořit. Nový uživatel je vyzván si účet vytvořit.
+S bankovním účtem lze provádět operace:
+\begin{itemize}
+    \item Vytvořit
+    \item Uzavřít (smazat)
+    \item Převod financí
+    \item Vklad financí
+    \item Historie transakcí
+\end{itemize}
+
+Informace, které budou o bankovním účtu uchovávány:
+\begin{itemize}
+    \item Vlastník
+          \begin{itemize}
+              \item Vlastník účtu
+              \item typ: String
+          \end{itemize}
+    \item Měna
+          \begin{itemize}
+              \item Měna ve které je účet veden
+              \item typ: String
+          \end{itemize}
+          \clearpage % TODO quickfix remove later
+    \item Zůstatek
+          \begin{itemize}
+              \item Aktuální stav účtu
+              \item typ: Int
+              \item max/min +-\numprint{1000000000} (1 Bilion)
+          \end{itemize}
+    \item Číslo účtu
+          \begin{itemize}
+              \item Číslo účtu
+              \item typ: String
+          \end{itemize}
+\end{itemize}
+Informace, které budou o transakcích uchovávány:
+\begin{itemize}
+    \item Číslo účtu odesílatele
+          \begin{itemize}
+              \item Číslo účtu, který je odesílatel
+              \item typ: String
+          \end{itemize}
+    \item Číslo účtu příjemce
+          \begin{itemize}
+              \item Číslo účtu, který je příjemce
+              \item typ: String
+          \end{itemize}
+    \item Částka před transakcí
+          \begin{itemize}
+              \item Částka převodu
+              \item typ: Int
+          \end{itemize}
+    \item Měna před transakcí
+          \begin{itemize}
+              \item Měna převodu
+              \item typ: String
+          \end{itemize}
+    \item Částka po transakci
+          \begin{itemize}
+              \item Částka převodu
+              \item typ: Int
+          \end{itemize}
+    \item Měna po transakci
+          \begin{itemize}
+              \item Měna převodu
+              \item typ: String
+          \end{itemize}
+    \item Timestamp
+          \begin{itemize}
+              \item Časová značka převodu
+              \item typ: Timestamp
+          \end{itemize}
+
+\end{itemize}
+
+\subsubsection{Vytvořit}
+Uživatel má možnost vytvářet bankovní účty. Při vytváření je dotázán na měnu ve které bude účet veden. Uživateli je vytvořen výchozí účet společně s provedením úspěšné registrace.
+
+\subsubsection{Uzavřít}
+Bankovní účet lze uzavřít pouze pokud je zůstatek 0.
+
+\subsubsection{Převod financí}
+Vlastník účtu může provádět převody mezi svými i cizími účty. Při převodu je třeba zadat číslo účtu, který obdrží finance a částku kolik se má převést. Měna převodu je vždy měna účtu, který převádí. Pokud účet má zůstatek v jiné měně, je převod proveden pomocí aktuálního kurzu.
+
+\subsubsection{Vklad financí}
+Je speciální typ převodu, který se provádí na vlastní účet. Při vkladu je třeba zadat částku kolik se má převést.
+
+\subsubsection{Historie transakcí}
+Všechny změny zůstatku jednoho či více účtů jsou považovány jako transakce. Provedené transakce jsou uchovávány pro účely archivní historie. Uživatel má možnost zobrazit historii transakcí jednoho či více účtů, které jsou k němu přiřazeny.
+
+\section{Požadavky aplikace}
+
+
+
+\subsection{Požadavky na frontend}
+Klient aplikace pro uživatele má následující požadavky
+\begin{itemize}
+    \item moderní webový prohlížeč podporující ES5.
+    \item konektivita na internet
+\end{itemize}
+
+\subsection{Požadavky na backend}
+Backend aplikace má následující požadavky
+\begin{itemize}
+    \item Docker prostředí schopné pustit více kontejnerů
+    \item konektivita na internet
+\end{itemize}
+
+\subsection{Požadavky na externí data}
+Pro funkčnost aplikace je zapotřebí externí data.
+Tyto data jsou:
+
+\begin{itemize}
+    \item Kurzy měn
+          \begin{itemize}
+              \item Kurzy měn ČNB
+              \item zdroj: \href{https://www.cnb.cz/cs/financni_trhy/devizovy_trh/kurzy_devizoveho_trhu/denni_kurz.txt}{cnb.cz}
+              \item formát:
+                    \begin{itemize}
+                        \item 1. řádek obsahující datum
+                        \item 2. CSV hlavička odpovídající schématu CSV
+                        \item 3.+ data ve formátu CSV s oddělovačem '|'
+
+                    \end{itemize}
+                    \begin{table}[h!]
+                        \centering
+                        \begin{tabular}{ |c|l|l| }
+                            \hline
+                            id & název sloupečku & typ hodnoty     \\
+                            \hline
+                            1. & "země"          & String          \\
+                            2. & "měna"          & String          \\
+                            3. & "množství"      & Number          \\
+                            3. & "kód"           & String          \\
+                            3. & "kurz"          & Number (double) \\
+                            \hline
+                        \end{tabular}
+                        \caption{Tabulka CSV schéma}
+                    \end{table}
+          \end{itemize}
+\end{itemize}
+
+Bez těchto dat nelze provádět převody mezi měnami.
+
+\subsection{Kvalita Softwaru}
+Aby byl snížen počet chyb v kódu a aplikace byla co nejvíce spolehlivá a bezpečná, bude využit automatizační prostředek Github Actions pro kontejnerizační platformu Docker. Tento prostředek bude spouštět testy a statickou analýzu kódu. Testy budou spouštěny při každém Testy a statická analýza bude spouštěna při každém vydání nové verze. Testy a statická analýza bude provedena za pomocí frameworku Vitest.
+
+\section{Očekávané scénáře}
+\subsection{Chyba při aktualizaci csv z ČNB}
+Pokud je pokyn k převodu měny a server nedokáže aktualizovat csv z ČNB, použije se nejaktuálnější záznam z vlastní databáze, pokud server bude mít data starší jak 24h tak převod měny nepovolí.
+
+Důvodem může být výpadek na straně ČNB, chybný formát stahovaného csv souboru, odebrání dotazované měny z csv souboru.
+
+\subsection{Výpadek služby Vercel}
+Služba Vercel poskytuje hosting a zařizuje správu webového serveru a databáze. V případě výpadku na straně služeb, které společnost Vercel poskytuje je třeba kontaktovat a zjistit, zda se jedná trvalý problém nebo mimořádný výpadek. Vercel má avšak repliky dat i serverů po celém světě s výbornou historií o zacházení dat svých klientů.
+
+V případě nepoužívání aplikace se aplikace vypíná pro ušetření výpočetních zdrojů. V takovémto případě nový požadavek na webové rozhraní zažádá o tzv. cold start aplikace, který trvá přibližně 1-3s než bude schopný hosting odeslat odpověď uživateli. Další dotazy by neměli být nijak omezované.
+
+\subsection{Platba z účtu, který nemá dostatek financí}
+V případě platby z účtu, který nemá dostatek financí, bude nabídnuto zda uživatel chce použít další účet, který může být v jiné měně. Poté provede platbu s případným převodem měn z vybraných účtů.
+
+\section{Vývoj a cena}
+Vzhledem k vyžádaným platformám a požadavků aplikace je doba vývoje odhadována na 6 týdnů. Čistá práce je odhadována na 90 hodin komulativního času všech vývojářů. Cena aplikace je odhadována na 37 125Kč
+
+% TODO cite file?
+\nocite{*}
+% Aplikace biblatexu a stylu citování ČSN ISO 690,
+% soubor refPsaniTextuNEW.bib je vložen v hlavičce dokumentů
+
+% \printbibliography[title={Použitá literatura}] % sazba seznamu citací
+% \printbibliography[title={References}]
+% \addcontentsline{toc}{chapter}{Použitá literatura} % vložení nadpisu do obsahu
+% \addcontentsline{toc}{chapter}{References}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\indexname}{Přehled příkazů, prostředí a voleb}
+\printindex
+
+% \appendix % začátek příloh / beginning of appendiecies
+% \chapter{Přílohy}
+% \section{Obsah vloženého balíku do IS/STAG TUL} % příklad přílohy
+% \begin{itemize}
+%     \item Text práce
+%     \item Obrazová dokumentace
+%     \item Zdrojové kódy
+%     \item \dots
+% \end{itemize}
+
+% \section{Velké tabulky a obrázky} % příklad přílohy
+
+\end{document}
