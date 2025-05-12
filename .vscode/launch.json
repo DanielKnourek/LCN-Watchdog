@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "command": "yarn migration:up",
+            "name": "Run migration:up",
+            "request": "launch",
+            "type": "node-terminal",
+        },
+        {
+            "command": "yarn migration:down",
+            "name": "Run migration:down",
+            "request": "launch",
+            "type": "node-terminal",
+        },
+        {
+            "command": "yarn dev",
+            "name": "Run yarn dev",
+            "request": "launch",
+            "type": "node-terminal",
+        },
+        {
+            "command": "yarn test",
+            "name": "Run yarn test",
+            "request": "launch",
+            "type": "node-terminal",
+        }
+    ]
+}
