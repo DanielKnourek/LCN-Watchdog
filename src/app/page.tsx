@@ -7,11 +7,11 @@ import { DebugTest } from "~/app/_components/DebugTest";
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "from tRPC" });
-  const session = await auth();
+  // const session = await auth();
 
-  if (session?.user) {
-    void api.post.getLatest.prefetch();
-  }
+  // if (session?.user) {
+  //   void api.post.getLatest.prefetch();
+  // }
 
   return (
     <HydrateClient>
@@ -27,7 +27,7 @@ export default async function Home() {
             <p className="text-2xl text-white">
               {hello ? hello.greeting : "Loading tRPC query..."}
             </p>
-
+{/* 
             <div className="flex flex-col items-center justify-center gap-4">
               <p className="text-center text-2xl text-white">
                 {session && <span>Logged in as {session.user?.name}</span>}
@@ -38,10 +38,10 @@ export default async function Home() {
               >
                 {session ? "Sign out" : "Sign in"}
               </Link>
-            </div>
+            </div> */}
           </div>
 
-          {session?.user && <LatestPost />}
+          {/* {session?.user && <LatestPost />} */}
         </div>
       </main>
     </HydrateClient>

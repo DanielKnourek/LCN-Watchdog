@@ -1,3 +1,4 @@
+import { time } from "console";
 import { relations, sql } from "drizzle-orm";
 import { index, pgTableCreator, primaryKey } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
@@ -10,26 +11,26 @@ import { type AdapterAccount } from "next-auth/adapters";
  */
 export const createTable = pgTableCreator((name) => `lcn-watchdog_${name}`);
 
-export const posts = createTable(
-  "post",
-  (d) => ({
-    id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
-    name: d.varchar({ length: 256 }),
-    createdById: d
-      .varchar({ length: 255 })
-      .notNull()
-      .references(() => users.id),
-    createdAt: d
-      .timestamp({ withTimezone: true })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
-  }),
-  (t) => [
-    index("created_by_idx").on(t.createdById),
-    index("name_idx").on(t.name),
-  ],
-);
+// export const posts = createTable(
+//   "post",
+//   (d) => ({
+//     id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+//     name: d.varchar({ length: 256 }),
+//     createdById: d
+//       .varchar({ length: 255 })
+//       .notNull()
+//       .references(() => users.id),
+//     createdAt: d
+//       .timestamp({ withTimezone: true })
+//       .default(sql`CURRENT_TIMESTAMP`)
+//       .notNull(),
+//     updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
+//   }),
+//   (t) => [
+//     index("created_by_idx").on(t.createdById),
+//     index("name_idx").on(t.name),
+//   ],
+// );
 
 export const users = createTable("user", (d) => ({
   id: d
