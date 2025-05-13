@@ -35,7 +35,6 @@ describe('Media Downloader', () => {
                 negative: { ...sampleFigure, totalResults: 80 },
                 neutral: { ...sampleFigure, totalResults:  0},
             })
-            console.log(`result: ${result}`); //TODO remove log
             expect(result).toEqual(2)
         }
         );
@@ -45,7 +44,6 @@ describe('Media Downloader', () => {
                 negative: { ...sampleFigure, totalResults: 300 },
                 neutral: { ...sampleFigure, totalResults: 0 },
             })
-            console.log(`result: ${result}`); //TODO remove log
             expect(result).toEqual(-7)
         }
         );
