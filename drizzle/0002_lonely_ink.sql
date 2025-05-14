@@ -1,0 +1,1 @@
+ALTER TABLE "lcn-watchdog_tracked_stocks" ALTER COLUMN "name" SET NOT NULL;

@@ -8,6 +8,20 @@
       "when": 1747175257252,
       "tag": "0000_spooky_serpent_society",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1747179936036,
+      "tag": "0001_naive_ezekiel",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1747180608610,
+      "tag": "0002_lonely_ink",
+      "breakpoints": true
     }
   ]
 }
