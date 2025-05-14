@@ -10,26 +10,26 @@ import { type AdapterAccount } from "next-auth/adapters";
  */
 export const createTable = pgTableCreator((name) => `lcn-watchdog_${name}`);
 
-export const posts = createTable(
-  "post",
-  (d) => ({
-    id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
-    name: d.varchar({ length: 256 }),
-    createdById: d
-      .varchar({ length: 255 })
-      .notNull()
-      .references(() => users.id),
-    createdAt: d
-      .timestamp({ withTimezone: true })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
-  }),
-  (t) => [
-    index("created_by_idx").on(t.createdById),
-    index("name_idx").on(t.name),
-  ],
-);
+// export const posts = createTable(
+//   "post",
+//   (d) => ({
+//     id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+//     name: d.varchar({ length: 256 }),
+//     createdById: d
+//       .varchar({ length: 255 })
+//       .notNull()
+//       .references(() => users.id),
+//     createdAt: d
+//       .timestamp({ withTimezone: true })
+//       .default(sql`CURRENT_TIMESTAMP`)
+//       .notNull(),
+//     updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
+//   }),
+//   (t) => [
+//     index("created_by_idx").on(t.createdById),
+//     index("name_idx").on(t.name),
+//   ],
+// );
 
 export const users = createTable("user", (d) => ({
   id: d
@@ -106,3 +106,40 @@ export const verificationTokens = createTable(
   }),
   (t) => [primaryKey({ columns: [t.identifier, t.token] })],
 );
+
+export const trackedStocks = createTable(
+  "tracked_stocks",
+  (d) => ({
+    id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
+    name: d.varchar({ length: 256 }).unique().notNull(),
+  }),
+  (t) => [index("name_idx").on(t.name)],
+);
+
+export const mediaTracker = createTable(
+  "media_tracker",
+  (d) => ({
+    stock_id: d.integer().references(() => trackedStocks.id),
+    timestamp: d
+      .timestamp({ mode: "date", withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    articles_positive_count: d.integer().notNull(),
+    articles_negative_count: d.integer().notNull(),
+    articles_neutral_count: d.integer().notNull(),
+  }),
+  (t) => [
+    primaryKey({ columns: [t.stock_id, t.timestamp] }),
+  ],
+);
+
+export const userPortfolio = createTable(
+  "user_portfolio",
+  (d) => ({
+    user_id: d.varchar({ length: 255 }).notNull().references(() => users.id),
+    stock_id: d.integer().notNull().references(() => trackedStocks.id),
+    shares: d.integer().notNull().default(0),
+  }),
+  (t) => [
+    primaryKey({ columns: [t.user_id, t.stock_id] }),
+  ])
