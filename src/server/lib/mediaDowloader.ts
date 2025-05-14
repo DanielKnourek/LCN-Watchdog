@@ -28,9 +28,9 @@ interface DowloadMediaWebzioParams {
  * This function downloads media data from Webz.io API based on the provided parameters.
  */
 const dowloadMediaWebzio = async ({ query_name, sentiment, min_time }: DowloadMediaWebzioParams) => {
-  if (min_time ??= undefined) { // TODO: move out function
-    min_time = new Date(Date.now() - 1000 * 60 * 60 * 24); // default to 24 hours ago
-  }
+  // default to 24 hours ago
+  min_time = min_time ?? new Date(Date.now() - 1000 * 60 * 60 * 24);
+
   const query_filters: string[] = [
     `${query_name}`,
     'topic:"financial and economic news"',
