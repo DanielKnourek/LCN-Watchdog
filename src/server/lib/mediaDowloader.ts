@@ -105,9 +105,14 @@ const evaluateScoreWebzio = ({ positive, negative, neutral }: evaluateScoreWebzi
   return normalized_score;
 }
 
-const updateAllTrackedStocks = async () => {
-  // querry when was the last update
-  let lastUpdate = await db.select({ timestamp: mediaTracker.timestamp }).from(mediaTracker).orderBy(mediaTracker.timestamp).limit(1)
+/**
+ * It queries the database for the last update timestamp. 
+ * If no update is found, it defaults to 24 hours ago.
+ */
+const getLastUpdate = async (): Promise<Date> => {
+  return await db.select({ timestamp: mediaTracker.timestamp })
+    .from(mediaTracker)
+    .orderBy(mediaTracker.timestamp).limit(1)
     .then((lastUpdate) => {
       if (lastUpdate.length === 0 || lastUpdate[0] === undefined) {
         return new Date(Date.now() - 1000 * 60 * 60 * 24); // default to 24 hours ago
@@ -118,77 +123,59 @@ const updateAllTrackedStocks = async () => {
       console.error("Error fetching last update:", error); //TODO remove log
       return new Date(Date.now() - 1000 * 60 * 60 * 24); // default to 24 hours ago
     });
+}
 
+const updateAll = async () => {
+  updateAllTrackedStocks({
+    lastUpdate: await getLastUpdate(),
+    trackedStocksList: await db.select().from(trackedStocks),
+  })
+}
 
-  let trackedStocksList = await db.select().from(trackedStocks);
+interface updateAllTrackedStocksParams {
+  lastUpdate: Date;
+  trackedStocksList: { id: number; name: string }[];
+}
 
-  const sentimets: DowloadMediaWebzioParams['sentiment'][] = ['positive', 'negative', 'neutral'];
-  trackedStocksList.forEach(async (stock) => {
-    // let stockMediaData: Partial<{ [S in DowloadMediaWebzioParams['sentiment']]?: ReturnType<typeof dowloadMediaWebzio>}> = {};
-    let stockMediaData: ReturnType<typeof dowloadMediaWebzio>[] = [];
+const sentiments: DowloadMediaWebzioParams['sentiment'][] = ['positive', 'negative', 'neutral'];
 
-    sentimets.forEach(async (sentiment) => {
-      stockMediaData.push(dowloadMediaWebzio({
+const updateAllTrackedStocks = async ({ lastUpdate, trackedStocksList }: updateAllTrackedStocksParams) => {
+
+  for (const stock of trackedStocksList) {
+    let stockMediaData: Awaited<ReturnType<typeof dowloadMediaWebzio>>[] = [];
+
+    for (const sentiment of sentiments) {
+      const data = await dowloadMediaWebzio({
         query_name: stock.name,
         sentiment: sentiment,
-        min_time: lastUpdate
-      }));
-    });
-
-    const stockMediaDataResults = await Promise.all(stockMediaData)
-      .catch((error) => {
-        console.error("Error parsing data:", error); //TODO remove log
-        throw error;
+        min_time: lastUpdate,
       });
+      stockMediaData.push(data);
+    }
 
-    db.insert(mediaTracker).values({
-      stock_id: stock.id,
-      articles_positive_count: stockMediaDataResults[0]?.totalResults ?? 0,
-      articles_negative_count: stockMediaDataResults[1]?.totalResults ?? 0,
-      articles_neutral_count: stockMediaDataResults[2]?.totalResults ?? 0,
-    })
+    await db
+      .insert(mediaTracker)
+      .values({
+        stock_id: stock.id,
+        articles_positive_count: stockMediaData[0]?.totalResults ?? 0,
+        articles_negative_count: stockMediaData[1]?.totalResults ?? 0,
+        articles_neutral_count: stockMediaData[2]?.totalResults ?? 0,
+      })
       .then(() => {
         // TODO: log success
-        console.log(`Updated media data for stock: ${stock.name}`); //TODO remove log
       })
       .catch((error) => {
         // TODO: log error
-        console.error("Error updating media data:", error); //TODO remove log
+        console.error("Error updating media data:", error); // TODO remove log
       });
-  });
+  }
 }
 
 
-const run = async () => {
-  const QUERY_FILTER = 'GOOG';
-  console.log("run media downloader"); //TODO remove log
-  const data = await dowloadMediaWebzio({
-    query_name: QUERY_FILTER,
-    sentiment: 'positive',
-    min_time: new Date(Date.now() - 1000 * 60 * 60 * 24)
-  });
-
-  const result = evaluateScoreWebzio({
-    positive: data,
-    negative: { ...data, totalResults: 140 },
-    neutral: { ...data, totalResults: 140 }
-  });
-
-  const data2 = await dowloadMediaWebzio({
-    query_name: QUERY_FILTER,
-    sentiment: 'negative',
-    min_time: new Date(Date.now() - 1000 * 60 * 60 * 24)
-  });
-
-  const data3 = await dowloadMediaWebzio({
-    query_name: QUERY_FILTER,
-    sentiment: 'neutral',
-    min_time: new Date(Date.now() - 1000 * 60 * 60 * 24)
-  });
-  console.log(`positive_data_totalResults: |${data.totalResults}|\negative_data_totalResults: |${data2.totalResults}|\neutral_data_totalResults: |${data3.totalResults}|\n`); //TODO remove log
-  // return { positive_data: data, negative_data: data2, neutral_data: data3 };
-  return { positive_data: result };
+const run = async () => { //TODO: remove fn
+  console.log("Running media downloader..."); //TODO remove log
+  return {}
 };
 
-export { dowloadMediaWebzio, evaluateScoreWebzio, updateAllTrackedStocks };
+export { dowloadMediaWebzio, evaluateScoreWebzio, updateAllTrackedStocks, updateAll, getLastUpdate };
 export default run;

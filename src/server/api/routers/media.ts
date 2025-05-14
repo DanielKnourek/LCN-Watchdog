@@ -7,7 +7,7 @@ import {
     protectedProcedure,
     publicProcedure,
 } from "~/server/api/trpc";
-import mediDownloader, { updateAllTrackedStocks } from "~/server/lib/mediaDowloader";
+import mediDownloader, { updateAll } from "~/server/lib/mediaDowloader";
 
 export const mediaRouter = createTRPCRouter({
     getTest: publicProcedure
@@ -24,7 +24,7 @@ export const mediaRouter = createTRPCRouter({
         ),
     updateAll: publicProcedure
         .query(async () => {
-            await updateAllTrackedStocks()
+            await updateAll()
                 .catch((error) => {
                     console.error("Error updating media data:", error); //TODO remove log
                     throw new TRPCError({
