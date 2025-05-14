@@ -1,8 +1,7 @@
 import { TRPCError } from "@trpc/server";
-import type { NextRequest } from "next/server";
 import { api } from "~/trpc/server";
 
-export async function updateAll (req: NextRequest) {
+export async function updateAll () {
   
   const media = await api.media.updateAll()
   .catch((error) => {

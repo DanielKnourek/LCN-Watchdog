@@ -27,8 +27,8 @@ interface DowloadMediaWebzioParams {
 /**
  * This function downloads media data from Webz.io API based on the provided parameters.
  */
-const dowloadMediaWebzio = async ({ query_name, sentiment, min_time, max_time }: DowloadMediaWebzioParams) => {
-  if (min_time === undefined) { // TODO: move out function
+const dowloadMediaWebzio = async ({ query_name, sentiment, min_time }: DowloadMediaWebzioParams) => {
+  if (min_time ??= undefined) { // TODO: move out function
     min_time = new Date(Date.now() - 1000 * 60 * 60 * 24); // default to 24 hours ago
   }
   const query_filters: string[] = [
@@ -126,7 +126,7 @@ const getLastUpdate = async (): Promise<Date> => {
 }
 
 const updateAll = async () => {
-  updateAllTrackedStocks({
+  await updateAllTrackedStocks({
     lastUpdate: await getLastUpdate(),
     trackedStocksList: await db.select().from(trackedStocks),
   })
@@ -142,7 +142,7 @@ const sentiments: DowloadMediaWebzioParams['sentiment'][] = ['positive', 'negati
 const updateAllTrackedStocks = async ({ lastUpdate, trackedStocksList }: updateAllTrackedStocksParams) => {
 
   for (const stock of trackedStocksList) {
-    let stockMediaData: Awaited<ReturnType<typeof dowloadMediaWebzio>>[] = [];
+    const stockMediaData: Awaited<ReturnType<typeof dowloadMediaWebzio>>[] = [];
 
     for (const sentiment of sentiments) {
       const data = await dowloadMediaWebzio({

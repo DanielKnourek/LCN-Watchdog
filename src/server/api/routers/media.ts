@@ -1,10 +1,7 @@
 import { TRPCError } from "@trpc/server";
-import test from "node:test";
-import { z } from "zod";
 
 import {
     createTRPCRouter,
-    protectedProcedure,
     publicProcedure,
 } from "~/server/api/trpc";
 import mediDownloader, { updateAll } from "~/server/lib/mediaDowloader";

@@ -1,4 +1,3 @@
-import test from "node:test";
 import { postRouter } from "~/server/api/routers/post";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { mediaRouter } from "~/server/api/routers/media";

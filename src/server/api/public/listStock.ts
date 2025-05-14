@@ -1,6 +1,6 @@
 import { api } from "~/trpc/server";
 
-export async function GET () {
+export async function listStock () {
   const media = await api.media.getTest();
   return new Response(JSON.stringify(media), {
     status: 200,

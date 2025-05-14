@@ -1,6 +1,5 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { api } from "~/trpc/react";
 
@@ -8,15 +7,15 @@ export function DebugTest() {
     const [count, setCount] = useState(0);
     const [foo, setFoo] = useState("foo");
     const utils = api.useUtils();
-    let [me] = api.post.hello.useSuspenseQuery({ text: `from tRPC ${count}` });
+    const [me] = api.post.hello.useSuspenseQuery({ text: `from tRPC ${count}` });
 
     return (
         <div>
         <button
-            onClick={() => {
+            onClick={async () => {
                 setFoo(`${me.greeting} updated`);
                 console.log(me);
-                utils.post.hello.invalidate();
+                await utils.post.hello.invalidate();
                 setCount((prev) => prev + 1);
             }
             }
